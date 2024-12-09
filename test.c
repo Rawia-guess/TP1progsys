@@ -5,14 +5,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include <time.h>  // Pour mesurer le temps d'exécution
-
-// Messages et constantes
+#include <time.h>  
 #define WELC_MES "Bienvenue dans le Shell ENSEA.\nPour quitter, tapez 'exit'.\n"
 #define MAX_CMD_LENGTH 100
 #define PROMPT "enseash % "
-
-// Prototypes de fonctions
 void disp_welc_mes();
 void displayPrompt(int last_exit_status, bool is_signal, long exec_time);
 void execute_command(char *command, int *last_exit_status, bool *is_signal, long *exec_time);
@@ -23,9 +19,9 @@ void disp_welc_mes() {
 }
 void displayPrompt(int last_exit_status, bool is_signal, long exec_time) {
     if (is_signal) {
-        printf(" %s[sign:%d|%ldms] ", PROMPT, last_exit_status, exec_time);
+        snprintf(" %s[sign:%d|%ldms] ", PROMPT, last_exit_status, exec_time);
     } else {
-        printf(" %s[exit:%d|%ldms] ", PROMPT, last_exit_status, exec_time);
+        snprintf(" %s[exit:%d|%ldms] ", PROMPT, last_exit_status, exec_time);
     }
 }
 int main() {
@@ -50,7 +46,7 @@ int main() {
                 continue;
             }
         }
-        command[strcspn(command, "\n")] = '\0';  // Enlever le caractère de nouvelle ligne
+        command[strcspn(command, "\n")] = '\0';  
 
         if (strcmp(command, "exit") == 0) {
             write(STDOUT_FILENO, "Bye bye...\n", strlen("Bye bye...\n"));
@@ -82,7 +78,7 @@ void execute_command(char *command, int *last_exit_status, bool *is_signal, long
         perror("Fork failed");
         return;
     }
-     if (process_id == 0) {  // Processus enfant
+     if (process_id == 0) {  
         char *arguments[MAX_CMD_LENGTH / 2 + 1];
         char *token = strtok(command, " ");
         int index = 0;
@@ -97,7 +93,7 @@ void execute_command(char *command, int *last_exit_status, bool *is_signal, long
             perror("Commande non trouvée");
             exit(1);
         }
-    } else {  // Processus parent
+    } else {  
         int status;
         waitpid(process_id, &status, 0);
 
